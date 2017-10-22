@@ -6,8 +6,6 @@ import {
   View
 } from 'react-native';
 
-
-
 export default class RegisterationScreen extends Component {
   render() {
     return (
