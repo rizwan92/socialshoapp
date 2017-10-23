@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { StyleSheet,Text,View,Image ,TouchableHighlight} from 'react-native';
-import { StackNavigator ,NavigationActions} from 'react-navigation';
+import { StackNavigator ,NavigationActions ,TabNavigator} from 'react-navigation';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterationScreen from './screens/RegisterationScreen';
@@ -10,32 +10,55 @@ import NearByScreen from './screens/NearByScreen';
 import AboutUs from './screens/AboutUs';
 import MyShop from './screens/MyShop';
 import MyProduct from './screens/MyProduct';
+import ProductScreen from './screens/ProductScreen';
+import LinkScreen from './screens/LinkScreen';
 import Meteor from 'react-native-meteor';
 import settings from './settings';
 Meteor.connect(settings.METEOR_URL);
-  handleevent=()=>{
 
-  }
   const Headerrigth =({navigation})=>{
     const { navigate } = navigation;
     return(
       <View style={{display:'flex',flexDirection:'row'}}>
-          <TouchableHighlight onPress={()=>{navigate('AboutUs')}}>
+          <TouchableHighlight onPress={()=>{navigate('Login')}}>
               <Image
-              source={require('./images/ic_contacts_white_24dp_1x.png')}
+              source={require('./images/ic_input_white_24dp_1x.png')}
               style={{marginRight:20}}/>
             </TouchableHighlight>
-          <TouchableHighlight onPress={()=>{navigate('NearBy')}}>
-              <Image
-              source={require('./images/ic_near_me_white_24dp_1x.png')}
-              style={{marginRight:20}}/>
-          </TouchableHighlight>
       </View>
         )
   }
+
+    const MyApp = TabNavigator({
+    Home: {
+      screen: HomeScreen,
+    },
+    NearBy: {
+      screen: NearByScreen,
+    },
+    Product: {
+      screen: ProductScreen,
+    },
+    Links: {
+      screen: LinkScreen,
+      tabBarIcon: ({ tintColor }) => (
+        <Image
+          source={require('./images/ic_near_me_white_24dp_1x.png')}
+          style={{tintColor: tintColor}}
+        />
+      ),
+    },
+  }, {
+    tabBarPosition: 'bottom',
+    animationEnabled: true,
+    tabBarOptions: {
+      activeTintColor: '#e91e63',
+    },
+  });
+
   const MyNavigator = StackNavigator({
     Home: {
-           screen: HomeScreen,
+           screen: MyApp,
            navigationOptions: ({navigation}) => ({
              title:'Shopbook',
              headerTitleStyle:{

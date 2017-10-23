@@ -21,4 +21,4 @@ export default class socialshop extends Component {
     );
   }
 }
-AppRegistry.registerComponent('socialshop', () => socialshop);
+AppRegistry.registerComponent('shopbook', () => socialshop);

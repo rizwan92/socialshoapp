@@ -7,6 +7,17 @@ import {
 } from 'react-native';
 
 export default class AboutUs extends Component {
+    static navigationOptions = {
+  title: 'AboutUs',
+  heder:true,
+  tabBarIcon: ({ tintColor }) => (
+    <Image
+      source={require('../images/ic_near_me_white_24dp_1x.png')}
+      style={{tintColor: tintColor}}
+    />
+  ),
+  };
+
   render() {
     return (
       <View style={{display:'flex',flex:1,backgroundColor:'#229bdc'}}>

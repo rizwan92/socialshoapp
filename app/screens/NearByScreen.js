@@ -8,7 +8,7 @@
     Dimensions,
     ScrollView,
     Image,
-    BackHandler,
+    TouchableWithoutFeedback,
   } from 'react-native';
   import Meteor, { createContainer } from 'react-native-meteor';
   import {checkPermission} from 'react-native-android-permissions';
@@ -17,6 +17,16 @@
 
 
   class NearByScreen extends Component {
+    static navigationOptions = {
+  title: 'NearBy',
+  heder:true,
+  tabBarIcon: ({ tintColor }) => (
+    <Image
+      source={require('../images/ic_near_me_white_24dp_1x.png')}
+      style={[styles.icon, {tintColor: tintColor}]}
+    />
+  ),
+};
     constructor(){
       super();
       this.state={
@@ -25,51 +35,43 @@
         distance:10,
       }
     }
-    static navigationOptions = {
-      title:'Shopbook',
-      headerTitleStyle:{
-        color:'white'
-      },
-      headerStyle:{
-        backgroundColor:'#229bdc'
-      },
-    }
     watchID: ?number = null;
 
     componentWillMount(){
+
+            checkPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
+
+              LocationServicesDialogBox.checkLocationServicesIsEnabled({
+                   message: "<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+                   ok: "YES",
+                   cancel: "NO",
+                   enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => ONLY GPS PROVIDER
+                   showDialog: true, // false => Opens the Location access page directly
+                   openLocationServices: true // false => Directly catch method is called if location services are turned off
+               }).then(function(success) {
+
+                 navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                       this.setState({ latitude:position.coords.latitude,longitude:position.coords.longitude });
+                    },
+                    (error) => console.log(error.message),
+                 );
+
+                   }.bind(this)
+               ).catch((error) => {
+                   console.log(error.message);
+               });
+
+
+
+            }, (result) => {
+
+            });
 
     }
 
     componentDidMount () {
 
-      checkPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
-
-        LocationServicesDialogBox.checkLocationServicesIsEnabled({
-             message: "<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-             ok: "YES",
-             cancel: "NO",
-             enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => ONLY GPS PROVIDER
-             showDialog: true, // false => Opens the Location access page directly
-             openLocationServices: true // false => Directly catch method is called if location services are turned off
-         }).then(function(success) {
-
-           navigator.geolocation.getCurrentPosition(
-              (position) => {
-                 this.setState({ latitude:position.coords.latitude,longitude:position.coords.longitude });
-              },
-              (error) => alert(error.message),
-           );
-
-             }.bind(this)
-         ).catch((error) => {
-             console.log(error.message);
-         });
-
-
-
-      }, (result) => {
-
-      });
        this.watchID = navigator.geolocation.watchPosition((position) => {
           const lastPosition = JSON.stringify(position);
           this.setState({ lastPosition });
@@ -100,8 +102,7 @@
           return (shop.distance=haversine(latLngA, latLngB));
         }
       }})
-
-
+      const { navigate } = this.props.navigation;
        return (
          <ScrollView style={styles.container}>
          <GooglePlacesAutocomplete
@@ -144,22 +145,30 @@
          :
          <View>
          {
-           nearbyshops.length == 0 ? <Text>No Shop Available At Your Place Right Now Try some other places</Text> :
-           <View style={{display:'flex',flexDirection:'row',flex:1,flexWrap:'wrap',marginTop:10,marginLeft:5,marginRight:5,justifyContent:'center',borderStyle:'solid'}}>
+           nearbyshops.length == 0 ? <Text>No Shop Available At Your Place Right Now Try some other places {"lat:"+this.state.latitude+ " lng: "+ this.state.longitude}</Text> :
+           <View style={{display:'flex',flexDirection:'column',flex:1,flexWrap:'wrap',justifyContent:'center',borderStyle:'solid'}}>
            {
            nearbyshops.map((shop,i)=>{
              let cardheight = height/3;
              let halfcard = cardheight/1.3;
              return(
-               <View key={i} style={[styles.cardContainer,{flexBasis:width/2.2,height:height/2.5}]}>
-               <Image source={shop.image == '' ? require('../images/noi.jpg') : {uri:shop.image}} style={{width:"100%", height:halfcard}} />
-               <Text style={{paddingLeft:5,fontSize:13,color:'blue'}}>{shop.sname}</Text>
-               <Text style={{paddingLeft:5,fontSize:11,color:'green'}}>Email: {shop.userdetail.email}</Text>
-               <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Contact: {shop.userdetail.number}</Text>
-               <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>GSTIN: {shop.scode}</Text>
-               <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Addres: {shop.sadd}</Text>
-               <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Distance: {shop.distance} Km.</Text>
+               <TouchableWithoutFeedback key={i} onPress={()=>navigate('MyShop',{shop:shop})}>
+               <View  style={styles.cardContainer}>
+               <View style={{display:'flex',width:width/4.5}}>
+                 <TouchableWithoutFeedback onPress={()=>navigate('MyShop',{shop:shop})}>
+                 <Image source={shop.image == '' ? require('../images/noi.jpg') : {uri:shop.image}} style={{width:80,height:80,borderRadius:50}} />
+                 </TouchableWithoutFeedback>
                </View>
+
+               <View style={{display:'flex'}}>
+                 <Text style={{paddingLeft:5,fontSize:15,color:'blue'}} onPress={()=>navigate('MyShop',{shop:shop})}>{shop.sname.toUpperCase()}</Text>
+                 <Text style={{paddingLeft:5,fontSize:13,color:'green'}}>Email: {shop.userdetail.email}</Text>
+                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Contact: {shop.userdetail.number}</Text>
+                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>GSTIN: {shop.scode}</Text>
+                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Addres: {shop.sadd}</Text>
+                 </View>
+               </View>
+               </TouchableWithoutFeedback>
              )
            })
            }
@@ -188,12 +197,10 @@
       },
       cardContainer:{
         display:'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        margin: 5,
-        padding:1,
-        borderWidth:0.5,
+        padding:3,
         backgroundColor: "#fff",
         borderRadius: 2,
         shadowColor: "#000000",
