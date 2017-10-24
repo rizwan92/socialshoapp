@@ -166,6 +166,7 @@
                  <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Contact: {shop.userdetail.number}</Text>
                  <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>GSTIN: {shop.scode}</Text>
                  <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Addres: {shop.sadd}</Text>
+                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Distance: {shop.distance} km.</Text>
                  </View>
                </View>
                </TouchableWithoutFeedback>
@@ -198,7 +199,7 @@
       cardContainer:{
         display:'flex',
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'flex-start',
         padding:3,
         backgroundColor: "#fff",

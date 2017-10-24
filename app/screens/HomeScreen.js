@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import Meteor, { createContainer } from 'react-native-meteor';
 import {
@@ -98,7 +97,7 @@ const styles = StyleSheet.create({
   cardContainer:{
     display:'flex',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'flex-start',
     margin: 5,
     padding:1,
