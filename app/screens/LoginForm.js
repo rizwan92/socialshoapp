@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Meteor from 'react-native-meteor';
+
 import {
   StyleSheet,
   Text,
@@ -6,6 +8,8 @@ import {
   Button,
   Dimensions,
   TextInput,
+  ToastAndroid,
+  AsyncStorage,
 } from 'react-native';
 
 export default class LoginForm  extends Component {
@@ -17,7 +21,7 @@ export default class LoginForm  extends Component {
       error: '',
     }
   }
-  handleLogin(){
+  handleLogin(props){
     const email =this.state.email.trim();
     const password = this.state.password.trim();
 
@@ -32,11 +36,17 @@ export default class LoginForm  extends Component {
 
         Meteor.call('user.check',email,password,(err,res)=>{
           if (res) {
-              Meteor.call('shop.check',Session.get('user')._id,function (error,result){
+           AsyncStorage.setItem('user_id',res._id);
+              Meteor.call('shop.check',res._id,function (error,result){
                 if (result) {
+                  AsyncStorage.setItem('shop_id',result._id);
+                  props.navigation.navigate('Admin');
                 }else {
+                  props.navigation.navigate('Login');
                 }
               });
+          }else {
+            ToastAndroid.show('Wrong Email and Password', ToastAndroid.SHORT);
           }
         }
         )
@@ -64,21 +74,24 @@ export default class LoginForm  extends Component {
 
         <TextInput
            style={{height: 40,width:sixtypercent,borderWidth:1,borderRadius:5,zIndex:2,margin:5,shadowOffset:{  width: 10,  height: 10,  },shadowColor: 'black',shadowOpacity: 1.0,color:'black'}}
-           placeholder="Name"
-           onChangeText={(text) => this.setState({name})}
+           placeholder="email"
+           onChangeText={(email) => this.setState({email})}
            underlineColorAndroid="transparent"
+           value={this.state.email}
            />
 
          <TextInput
            style={{height: 40,width:sixtypercent,borderWidth:1,borderRadius:5,zIndex:2,margin:5,shadowOffset:{  width: 10,  height: 10,  },shadowColor: 'black',shadowOpacity: 1.0,backgroundColor:'#F5FCFF',color:'black'}}
-           placeholder="Email"
-           onChangeText={(text) => this.setState({email})}
+           placeholder="password"
+           onChangeText={(password) => this.setState({password})}
            underlineColorAndroid="transparent"
+           secureTextEntry={true}
+           value={this.state.password}
           />
 
 
             <Button
-              onPress={this.handleLogin.bind(this)}
+              onPress={this.handleLogin.bind(this,this.props)}
               title="Login"
               style={{margin:5}}
             />

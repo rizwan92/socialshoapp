@@ -12,6 +12,7 @@ import MyShop from './screens/MyShop';
 import MyProduct from './screens/MyProduct';
 import ProductScreen from './screens/ProductScreen';
 import LinkScreen from './screens/LinkScreen';
+import MyShopAdmin from './screens/MyShopAdmin';
 import Meteor from 'react-native-meteor';
 import settings from './settings';
 Meteor.connect(settings.METEOR_URL);
@@ -72,6 +73,9 @@ Meteor.connect(settings.METEOR_URL);
        },
     Login: {
         screen: LoginScreen
+      },
+    Admin: {
+        screen: MyShopAdmin
       },
     Registeration: {
          screen: RegisterationScreen

@@ -28,9 +28,7 @@ export default class RegisterationScreen extends Component {
   }
 
   componentWillMount(){
-
-          checkPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
-
+             checkPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
             LocationServicesDialogBox.checkLocationServicesIsEnabled({
                  message: "<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
                  ok: "YES",
@@ -39,25 +37,18 @@ export default class RegisterationScreen extends Component {
                  showDialog: true, // false => Opens the Location access page directly
                  openLocationServices: true // false => Directly catch method is called if location services are turned off
              }).then(function(success) {
-
                navigator.geolocation.getCurrentPosition(
                   (position) => {
                      this.setState({ latitude:position.coords.latitude,longitude:position.coords.longitude });
                   },
                   (error) => console.log(error.message),
                );
-
                  }.bind(this)
              ).catch((error) => {
                  console.log(error.message);
              });
-
-
-
           }, (result) => {
-
           });
-
   }
 
 
@@ -108,8 +99,6 @@ export default class RegisterationScreen extends Component {
     }else {
       this.setState({error:`password doesn't match`})
     }
-
-
   }
 
   render() {

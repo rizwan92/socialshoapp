@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Linking,
   TextInput,
+  ToastAndroid,
 } from 'react-native';
 
  class LinkScreen extends Component {
@@ -29,7 +30,12 @@ import {
   ),
   };
   handleLinking(url){
-    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+    try {
+      Linking.openURL(url).catch(err => console.error('An error occurred', err));
+
+    } catch (e) {
+    ToastAndroid.show('Link is Not Available', ToastAndroid.SHORT);
+    }
   }
 
   render() {
@@ -59,7 +65,6 @@ import {
           {
             searchlinks.map((link,i)=>{
               let timesplit =link.length.split('.')
-              console.log(timesplit);
               return(
                 <View key={i}  style={styles.cardContainer}>
                 <View style={{display:'flex',width:width/4.5}}>
