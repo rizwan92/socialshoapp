@@ -24,7 +24,7 @@ export default class MyProduct extends Component {
     var seventypercent = width *70/100;
     return (
       <ScrollView style={styles.container}>
-        <Image source={this.props.navigation.state.params.product.image == '' ? require('../images/noi.jpg') : {uri:this.props.navigation.state.params.product.image}} style={{width:"100%", height:seventypercent}} />
+        <Image source={this.props.navigation.state.params.product.image == '' || this.props.navigation.state.params.product.image == null ? require('../images/noi.jpg') : {uri:this.props.navigation.state.params.product.image}} style={{width:"100%", height:seventypercent}} />
 
         <View style={{display:'flex',padding:2}}>
 

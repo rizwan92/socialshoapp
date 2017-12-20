@@ -1,15 +1,17 @@
   import React, { Component } from 'react';
   import {
     StyleSheet,
-    Text,
     View,
-    Button,
+
     Switch,
     Dimensions,
     ScrollView,
+    FlatList,
     Image,
     TouchableWithoutFeedback,
   } from 'react-native';
+  import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
+
   import Meteor, { createContainer } from 'react-native-meteor';
   import {checkPermission} from 'react-native-android-permissions';
   import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -105,6 +107,7 @@
       const { navigate } = this.props.navigation;
        return (
          <ScrollView style={styles.container}>
+         <Card>
          <GooglePlacesAutocomplete
             placeholder='Search Your Local Shops By Place...'
             minLength={2}
@@ -114,7 +117,6 @@
             fetchDetails={true}
             renderDescription={(row) => row.description}
             onPress={(data, details = null) => {
-              console.log(details);
                   this.setState({
                     latitude:details.geometry.location.lat,
                     longitude:details.geometry.location.lng,
@@ -132,48 +134,41 @@
                 fontWeight: 'bold'
               },
               predefinedPlacesDescription: {
-                color: '#1faadb'
+                color: 'blue'
               }
             }}
             filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
-            currentLocation={true}
-            currentLocationLabel="Current location"
+            // currentLocation={true}
+            // currentLocationLabel="Current location"
             nearbyPlacesAPI='GooglePlacesSearch'
             debounce={200}
           />
+          </Card>
          {this.props.todosReady ? <Text  style={styles.item}>Wait{this.state.latitude+ '  ' +this.state.longitude}</Text>
          :
          <View>
          {
-           nearbyshops.length == 0 ? <Text>No Shop Available At Your Place Right Now Try some other places {"lat:"+this.state.latitude+ " lng: "+ this.state.longitude}</Text> :
-           <View style={{display:'flex',flexDirection:'column',flex:1,flexWrap:'wrap',justifyContent:'center',borderStyle:'solid'}}>
-           {
-           nearbyshops.map((shop,i)=>{
-             let cardheight = height/3;
-             let halfcard = cardheight/1.3;
-             return(
-               <TouchableWithoutFeedback key={i} onPress={()=>navigate('MyShop',{shop:shop})}>
-               <View  style={styles.cardContainer}>
-               <View style={{display:'flex',width:width/4.5}}>
-                 <TouchableWithoutFeedback onPress={()=>navigate('MyShop',{shop:shop})}>
-                 <Image source={shop.image == '' ? require('../images/noi.jpg') : {uri:shop.image}} style={{width:80,height:80,borderRadius:50}} />
-                 </TouchableWithoutFeedback>
-               </View>
+           nearbyshops.length == 0 ? <Text>No Shop Available At Your Place Right Now Try some other places {"lat:"+this.state.latitude+ " lng: "+ this.state.longitude}</Text>
+           :
+           <FlatList
+                     data={nearbyshops}
+                     keyExtractor={(item, index) => item._id}
+                     renderItem={({item}) =>
+                     <TouchableWithoutFeedback  onPress={()=>navigate('MyShop',{shop:item})}>
+                      <CardItem>
+                        <Left>
+                          <Thumbnail source={item.image == '' ? require('../images/noi.jpg'):{uri: item.image}} />
+                          <Body>
+                            <Text>{item.sname}</Text>
+                            <Text note>{item.sadd}</Text>
+                            <Text note>{item.scode}</Text>
+                          </Body>
+                        </Left>
+                      </CardItem>
+                      </TouchableWithoutFeedback>
+                   }
+                />
 
-               <View style={{display:'flex'}}>
-                 <Text style={{paddingLeft:5,fontSize:15,color:'blue'}} onPress={()=>navigate('MyShop',{shop:shop})}>{shop.sname.toUpperCase()}</Text>
-                 <Text style={{paddingLeft:5,fontSize:13,color:'green'}}>Email: {shop.userdetail.email}</Text>
-                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Contact: {shop.userdetail.number}</Text>
-                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>GSTIN: {shop.scode}</Text>
-                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Addres: {shop.sadd}</Text>
-                 <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Distance: {shop.distance} km.</Text>
-                 </View>
-               </View>
-               </TouchableWithoutFeedback>
-             )
-           })
-           }
-           </View>
          }
          </View>
          }

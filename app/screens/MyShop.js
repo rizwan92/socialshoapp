@@ -3,16 +3,15 @@ import Meteor, { connectMeteor } from 'react-native-meteor';
 import moment from 'moment';
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
+  Button as Button1,
   Image,
   Dimensions,
-  Button,
+  FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-
- class MyShop extends Component {
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base'; class MyShop extends Component {
   static navigationOptions = ({ navigation }) => ({
      title: `${navigation.state.params.shop.sname}`,
      headerTitleStyle:{
@@ -38,85 +37,77 @@ import {
     const { navigate } = this.props.navigation;
 
     return (
-      <ScrollView style={styles.container}>
-        <Image source={this.props.navigation.state.params.shop.image == '' ? require('../images/noi.jpg') : {uri:this.props.navigation.state.params.shop.image}} style={{width:"100%", height:seventypercent}} />
+      <Container>
+          <Content>
+            <Card>
+              <CardItem>
+                <Left>
+                  <Body>
+                    <Text>{this.props.navigation.state.params.shop.sname}</Text>
+                    <Text note>{this.props.navigation.state.params.shop.sadd}</Text>
+                  </Body>
+                </Left>
+              </CardItem>
+              <CardItem cardBody>
+                <Image source={this.props.navigation.state.params.shop.image == '' ? require('../images/noi.jpg'):{uri: this.props.navigation.state.params.shop.image}} style={{height: 200, width: null, flex: 1}}/>
+              </CardItem>
+              <CardItem>
+                <Left>
+                  <Button transparent>
+                    <Text>{visits == undefined ? null: visits.visit} visits</Text>
+                  </Button>
+                </Left>
+                <Right>
+                <Text>{visits == undefined ? null: moment(visits.createdAt).fromNow()} </Text>
+                </Right>
+              </CardItem>
 
-        <View style={{display:'flex',padding:2}}>
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text style={{color: 'blue',fontSize:15}}>{this.props.navigation.state.params.shop.sname} </Text>
-          </View>
+              <CardItem>
+                <Left>
+                  <Button1
+                    onPress={() => {}}
+                    title="Messenger"
+                  />
+                </Left>
+                <Body>
+                  <Button1
+                    onPress={() => {}}
+                    title="Whatsapp"
+                    color="green"
+                  />
+                </Body>
+              </CardItem>
 
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text style={{color: '#5dac48',fontSize:13}}>{this.props.navigation.state.params.shop.sadd}</Text>
-          </View>
-
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text style={{color: 'black',fontSize:13}}>{this.props.navigation.state.params.shop.userdetail.email}</Text>
-          </View>
-
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text style={{color: 'black',fontSize:13}}>{this.props.navigation.state.params.shop.userdetail.number}</Text>
-          </View>
-
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text style={{color: 'black',fontSize:13}}>{this.props.navigation.state.params.shop.scode}</Text>
-          </View>
-        </View>
-
-
-        <View style={{display:'flex',flexDirection:'row',height:40,justifyContent:'space-between',alignItems:'center',padding:2,borderTopWidth:0.5,borderBottomWidth:0.5}}>
-          <View style={{display:'flex',flexDirection:'row'}}>
-          <Text>Last Visit : {visits == undefined ? null: moment(visits.createdAt).fromNow()} </Text>
-          </View>
-          <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-          <Text>{visits == undefined ? null: visits.visit}</Text>
-          <Image source={require('../images/ic_visibility_black_24dp_1x.png')} style={{marginRight:5,marginLeft:5}} />
-          </View>
-        </View>
-
-
-        <View style={{display:'flex',flexDirection:'row',justifyContent:'space-around',alignItems:'center',padding:2,margin:5}}>
-          <Button
-            onPress={() => {}}
-            title="Messenger"
-          />
-          <Button
-            onPress={() => {}}
-            title="Whatsapp"
-            color="green"
-          />
-        </View>
+            </Card>
 
 
-        <View>
-           {
-          products.length == 0 ? null :
-          <View style={{display:'flex',flexDirection:'row',flex:1,flexWrap:'wrap',marginTop:10,marginLeft:5,marginRight:5,justifyContent:'center',borderStyle:'solid'}}>
-          {
-          products.map((product,i)=>{
-            let cardheight = height/3;
-            let halfcard = cardheight/1.3;
-            return(
-              <View key={i} style={[styles.cardContainer,{flexBasis:width/2.2,height:height/2.5}]}>
-              <TouchableWithoutFeedback onPress={()=>navigate('MyProduct',{product:product})}>
-              <Image source={product.image == '' ? require('../images/noi.jpg') : {uri:product.image}} style={{width:"100%", height:halfcard}} />
-              </TouchableWithoutFeedback>
-              <Text style={{paddingLeft:5,fontSize:15,color:'blue'}} onPress={()=>navigate('MyProduct',{product:product}  )}>{product.name}</Text>
-              <Text style={{paddingLeft:5,fontSize:11,color:'green'}}>Price: ₹ {product.sellprice} </Text>
-              <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Discount {product.discount} %</Text>
-              <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Tax {product.tax ? product.tax : 0} %</Text>
-              <Text style={{paddingLeft:5,fontSize:11,color:'black'}}>Stock {product.stock}</Text>
-              </View>
-            )
-          })
-          }
-          </View>
-        }
-        </View>
-
-
-      </ScrollView>
-    );
+            <Card>
+            <CardItem>
+            <Text>Products</Text>
+            </CardItem>
+            <FlatList
+                      data={products}
+                      keyExtractor={(item, index) => item._id}
+                      renderItem={({item}) =>{
+                        return(
+                          <TouchableWithoutFeedback  onPress={()=>navigate('MyProduct',{product:item})}>
+                           <CardItem>
+                             <Left>
+                               <Thumbnail source={item.image == '' || item.image == null ? require('../images/noi.jpg'):{uri: item.image}} />
+                               <Body>
+                                 <Text>{item.name}</Text>
+                               </Body>
+                             </Left>
+                           </CardItem>
+                           </TouchableWithoutFeedback>
+                        )
+                      }
+                    }
+                      />
+              </Card>
+          </Content>
+        </Container>
+          );
   }
 }
 connectMeteor(MyShop);

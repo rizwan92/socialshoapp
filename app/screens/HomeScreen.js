@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Meteor, { createContainer } from 'react-native-meteor';
 import {
   StyleSheet,
-  Text,
   View,
   FlatList,
   Dimensions,
@@ -11,17 +10,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 class HomeScreen extends Component {
-  static navigationOptions = {
-   tabBarLabel: 'Home',
-   tabBarIcon: ({ tintColor }) => (
-     <Image
-       source={require('../images/ic_contacts_white_24dp_1x.png')}
-       style={[styles.icon, {tintColor: tintColor}]}
-     />
-   ),
- };
   constructor(props){
     super(props);
      this.state = {text: ''};
@@ -35,46 +25,38 @@ class HomeScreen extends Component {
   })
     return (
       <ScrollView style={styles.container}>
-      <View style={{padding: 10}}>
-        <TextInput
-             style={{height: 40,borderWidth:1,borderRadius:5,zIndex:2,shadowOffset:{  width: 10,  height: 10,  },shadowColor: 'black',shadowOpacity: 1.0,backgroundColor:'#F5FCFF',color:'black'}}
-             placeholder="Search Local Shops By Name..."
-             onChangeText={(text) => this.setState({text})}
-             underlineColorAndroid="transparent"
-           />
-      </View>
+      <Card>
+         <TextInput
+              placeholder="Search Local Shops By Name..."
+              onChangeText={(text) => this.setState({text})}
+              underlineColorAndroid="transparent"
+            />
+       </Card>
 
       {this.props.todosReady ? <Text  style={styles.item}>Wait</Text>
       :
       <View>
          {
         this.props.shops.length == 0 ? null :
-        <View style={{display:'flex',flexDirection:'column',flex:1,marginTop:10,justifyContent:'center'}}>
-        {
-        searchshps.map((shop,i)=>{
-          return(
-            <TouchableWithoutFeedback key={i} onPress={()=>navigate('MyShop',{shop:shop})}>
-            <View  style={styles.cardContainer}>
-            <View style={{display:'flex',width:width/4.5}}>
-              <TouchableWithoutFeedback onPress={()=>navigate('MyShop',{shop:shop})}>
-              <Image source={shop.image == '' ? require('../images/noi.jpg') : {uri:shop.image}} style={{width:80,height:80,borderRadius:50}} />
-              </TouchableWithoutFeedback>
-            </View>
-
-            <View style={{display:'flex'}}>
-              <Text style={{paddingLeft:5,fontSize:15,color:'blue'}} onPress={()=>navigate('MyShop',{shop:shop})}>{shop.sname.toUpperCase()}</Text>
-              <Text style={{paddingLeft:5,fontSize:13,color:'green'}}>Email: {shop.userdetail.email}</Text>
-              <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Contact: {shop.userdetail.number}</Text>
-              <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>GSTIN: {shop.scode}</Text>
-              <Text style={{paddingLeft:5,fontSize:13,color:'black'}}>Addres: {shop.sadd}</Text>
-              </View>
-            </View>
-            </TouchableWithoutFeedback>
-          )
-        })
-        }
-        </View>
-      }
+        <FlatList
+                  data={searchshps}
+                  keyExtractor={(item, index) => item._id}
+                  renderItem={({item}) =>
+                  <TouchableWithoutFeedback  onPress={()=>navigate('MyShop',{shop:item})}>
+                   <CardItem>
+                     <Left>
+                       <Thumbnail source={item.image == '' ? require('../images/noi.jpg'):{uri: item.image}} />
+                       <Body>
+                         <Text>{item.sname}</Text>
+                         <Text note>{item.sadd}</Text>
+                         <Text note>{item.scode}</Text>
+                       </Body>
+                     </Left>
+                   </CardItem>
+                   </TouchableWithoutFeedback>
+                }
+                />
+          }
       </View>
       }
       </ScrollView>
